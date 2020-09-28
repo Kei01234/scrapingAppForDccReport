@@ -8,7 +8,9 @@ var html=fs.readFileSync("html/test3Mixed.html", "utf-8");
 var dom=new JSDOM(html);
 
 
-var x=dom.window.document.querySelectorAll().map(e=>e.value);
+console.log(0/3);
+console.log(1/3);
+console.log(2/3);
 
-console.log(x)
+console.log(2/3+1/3);
 

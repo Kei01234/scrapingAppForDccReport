@@ -8,6 +8,15 @@ var html=fs.readFileSync("html/test3Mixed.html", "utf-8");
 //htmlファイルの読み込み
 var dom=new JSDOM(html);
 
+var coordinateList=[];
+var coordinateDictionary={};
+var noteList=[];
+var titleList=[];
+var coordinateMemoList=[];
+var simpleMemoList=[]
+var simpleMemoDictionary=[]
+var noteList=[];
+
 
 
 //学籍番号が格納されているvalue値の場所を取得
@@ -71,16 +80,12 @@ console.log(basicInformationDictionary);
 
 
 
-var coordinateList=[];
-var coordinateDictionary={};
-
 //点のx値とy値を取得する
 var pointsInformation=dom.window.document.querySelectorAll(".note-footer");
 
 //note-footerクラスの数がグラフの点の数になっているため、その数を取得する
 var numberOfPoits=pointsInformation.length;
 
-console.log(numberOfPoits)
 
 for (let i = 0; i < numberOfPoits; i++) {
     var pointsList=pointsInformation[i].textContent;
@@ -95,25 +100,76 @@ for (let i = 0; i < numberOfPoits; i++) {
     //pointsListを扱いやすいリストに変更
     for (let i = 0; i < pointsList.length; i++) {
         coordinateList.push(Number(pointsList[i]));
-    } 
+    }
 }
 
 console.log(coordinateList)
 
-//座標の辞書を作成
-for (let i = 0; i< coordinateList.length; i++) {
-    if (i%2==0) {
-        var num=i/2+1;
-        coordinateDictionary["x"+num]=coordinateList[i];
+
+
+//点の注釈かただのメモかを選別する
+var noteContentList=dom.window.document.querySelectorAll(".note-content");
+var headerList=dom.window.document.querySelectorAll(".note-header");
+
+//点の注釈とただのメモの内容を両方とも抽出する
+for (let i = 0; i < noteContentList.length; i++) {
+    var noteContent=noteContentList[i].textContent;
+
+    noteList.push(noteContent);
+}
+
+//その点の番号と"Note"という文字列を取得
+for (let i = 0; i < headerList.length; i++) {
+    var header=headerList[i].textContent;
+
+    titleList.push(header);
+}
+
+
+//座標のメモのリストを作成
+for (let i = 0; i < titleList.length; i++) {
+    if (titleList[i]!="Note") {
+        coordinateMemoList.push(noteList[i]);
+    }
+}
+
+
+//座標とその座標のメモの辞書を作成
+var numberOfList=coordinateList.length+coordinateList.length/2;
+var x=0;
+var y=0;
+
+for (let i = 0; i<numberOfList; i++) {
+    if (i%3==0) {
+        var num=i/3+1;
+        coordinateDictionary["x"+num]=coordinateList[x];
+        x++;
+    }
+
+    else if (i%3==1) {
+        var num=i/3+2/3;
+        coordinateDictionary["y"+num]=coordinateList[x];
+        x++;
     }
 
     else {
-        var num=i/2+0.5;
-        coordinateDictionary["y"+num]=coordinateList[i];
+        var num=i/3+1/3;
+        //その点のメモを入れる
+        coordinateDictionary["#"+num]=coordinateMemoList[y]
+        y++;
     }
 }
 
 console.log(coordinateDictionary)
 
 
+//普通のメモの辞書を作成
+var z=1;
+for (let i = 0; i < titleList.length; i++) {
+    if (titleList[i]=="Note") {
+        simpleMemoDictionary["Note"+z]=noteList[i];
+        z++;
+    }
+}
 
+console.log(simpleMemoDictionary);
