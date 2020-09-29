@@ -1,6 +1,7 @@
 const jsdom=require("jsdom");
 const { JSDOM } = jsdom;
 const fs=require("fs");
+const iconv = require('iconv-lite')
 
 
 var html=fs.readFileSync("html/test3Mixed.html", "utf-8");
@@ -13,7 +14,6 @@ var coordinateDictionary={};
 var noteList=[];
 var titleList=[];
 var coordinateMemoList=[];
-var simpleMemoList=[]
 var simpleMemoDictionary=[]
 var noteList=[];
 
@@ -173,3 +173,52 @@ for (let i = 0; i < titleList.length; i++) {
 }
 
 console.log(simpleMemoDictionary);
+
+
+//tsvファイルに書き込む処理を追加
+console.log(coordinateDictionary["x1"])
+console.log(num)
+
+var elementalTsv=id+"\t"+name+"\t";
+
+
+//1行1列目のtsv文字列を作成
+for (let i = 1; i <= num; i++) {
+    if (i==1) {
+        var descriveTsv="学籍番号\t名前\t曲線上の点の数\t";
+    }
+    
+    descriveTsv+="点"+i+"\t";
+}
+
+//実際の座標のtsv文字列を作成
+for (let i = 1; i <= num; i++) {
+    if (i==1) {
+        var coordinateTsv=elementalTsv+numberOfPoits+"\t";   
+    }
+
+    coordinateTsv+="("+coordinateDictionary["x"+i]+","+coordinateDictionary["y"+i]+")\t";
+
+    //その座標に関するメモがいらない場合は下の1行をコメントアウトする
+    //coordinateTsv+=coordinateDictionary["#"+i]+"\t";
+}
+
+//tsv文字列の完成品
+var tsv=descriveTsv+"\n"+coordinateTsv+"\n";
+
+console.log(tsv);
+
+
+
+// Shift-jisで書き出しする
+fs.writeFileSync( "tsv/test2.tsv" , "" )                  // 空のファイルを書き出す
+let fd    = fs.openSync( "tsv/test2.tsv", "w")            // ファイルを書き込み専用モードで開く
+let buf   = iconv.encode( tsv , "UTF-16LE" , { addBOM: true } )  // 書き出すデータをUTF-16リトルエンディアンBOM付きに変換して、バッファとして書き出す
+fs.write( fd , buf , 0 , buf.length , (err, written, buffer) => {  //  バッファをファイルに書き込む
+  if(err){
+  	throw err
+  }
+  else {
+  	console.log("ファイルが正常に書き出しされました")
+  }
+})
