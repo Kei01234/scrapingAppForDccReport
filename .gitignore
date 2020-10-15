@@ -1,1 +1,5 @@
+*.html
+*.tsv
+
+# for macOS
 .DS_Store
