@@ -1,5 +1,5 @@
+node_modules
+.DS_Store
+
 *.html
 *.tsv
-
-# for macOS
-.DS_Store

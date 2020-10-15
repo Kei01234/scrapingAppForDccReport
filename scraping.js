@@ -1,10 +1,9 @@
 const jsdom=require("jsdom");
 const { JSDOM } = jsdom;
 const fs=require("fs");
-const iconv = require('iconv-lite')
 
 
-var html=fs.readFileSync("html/test3Mixed.html", "utf-8");
+var html=fs.readFileSync("sample.html");
 
 //htmlファイルの読み込み
 var dom=new JSDOM(html);
@@ -206,19 +205,4 @@ for (let i = 1; i <= num; i++) {
 //tsv文字列の完成品
 var tsv=descriveTsv+"\n"+coordinateTsv+"\n";
 
-console.log(tsv);
-
-
-
-// Shift-jisで書き出しする
-fs.writeFileSync( "tsv/scraping.tsv" , "" )                  // 空のファイルを書き出す
-let fd    = fs.openSync( "tsv/scraping.tsv", "w")            // ファイルを書き込み専用モードで開く
-let buf   = iconv.encode( tsv , "UTF-16LE" , { addBOM: true } )  // 書き出すデータをUTF-16リトルエンディアンBOM付きに変換して、バッファとして書き出す
-fs.write( fd , buf , 0 , buf.length , (err, written, buffer) => {  //  バッファをファイルに書き込む
-  if(err){
-  	throw err
-  }
-  else {
-  	console.log("ファイルが正常に書き出しされました")
-  }
-})
+fs.writeFileSync("sample.tsv", tsv);
