@@ -1,0 +1,15 @@
+{
+  "name": "dcc-report-scraper",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "start": "node scraping.js"
+  },
+  "dependencies": {
+    "jsdom": "^16.4.0"
+  },
+  "devDependencies": {
+    "@types/jsdom": "^16.2.4"
+  }
+}
