@@ -23,7 +23,7 @@ try {
   const notes = [...document.querySelectorAll(".note:not(.new)")];
   contents = notes.map((note) => {
     const memo = note.childNodes[2].value;
-    const [, x, y] = note.childNodes[3].textContent.match(pointPattern);
+    const [, x, y] = note.childNodes[3].textContent.match(pointPattern) || [];
     return [memo, x, y].join(separator);
   });
 } catch {
