@@ -10,8 +10,8 @@ function printError(message) {
   process.exit(1);
 }
 
-if (!process.argv[2]) printError("");
-if (!fs.existsSync(process.argv[2])) printError("");
+if (!process.argv[2]) printError("入力ファイルを指定してください");
+if (!fs.existsSync(process.argv[2])) printError("入力ファイルの指定が不正です");
 const html = fs.readFileSync(process.argv[2]);
 const { name } = path.parse(process.argv[2]);
 
@@ -34,5 +34,5 @@ try {
   fs.writeFileSync(`${name}.tsv`, tsv);
   console.log(info.flat().join(" "));
 } catch {
-  printError("");
+  printError("結果の出力に失敗しました");
 }
