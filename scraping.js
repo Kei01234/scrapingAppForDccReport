@@ -12,24 +12,26 @@ function printError(message) {
 
 if (!process.argv[2]) printError("入力ファイルを指定してください");
 if (!fs.existsSync(process.argv[2])) printError("入力ファイルの指定が不正です");
-const html = fs.readFileSync(process.argv[2]);
 const { name } = path.parse(process.argv[2]);
+const html = fs.readFileSync(process.argv[2]);
+const { document } = new JSDOM(html).window;
 
-const { window } = new JSDOM(html);
-const points = window.document
-  .querySelector(".graph-info")
-  .innerHTML.split("<br>");
-const info = points.map((point) => point.match(pointPattern).slice(1, 3));
-const notes = [...window.document.querySelectorAll(".note:not(.new)")];
-const contents = notes.map((note) => {
-  const memo = note.childNodes[2].value;
-  const [, x, y] = note.childNodes[3].textContent.match(pointPattern);
-  return [memo, x, y].join(separator);
-});
+let info, contents;
+try {
+  const points = document.querySelector(".graph-info").innerHTML.split("<br>");
+  info = points.map((point) => point.match(pointPattern).slice(1, 3));
+  const notes = [...document.querySelectorAll(".note:not(.new)")];
+  contents = notes.map((note) => {
+    const memo = note.childNodes[2].value;
+    const [, x, y] = note.childNodes[3].textContent.match(pointPattern);
+    return [memo, x, y].join(separator);
+  });
+} catch {
+  printError("入力ファイルの解析に失敗しました");
+}
 
 const header = ["memo", "x", "y"].join(separator);
 const tsv = [header, ...contents].join("\n");
-
 try {
   fs.writeFileSync(`${name}.tsv`, tsv);
   console.log(info.flat().join(" "));
