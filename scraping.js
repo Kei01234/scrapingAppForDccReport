@@ -1,19 +1,25 @@
+const path = require("path");
 const fs = require("fs");
 const { JSDOM } = require("jsdom");
 
-const filename = "sample";
 const separator = "\t";
 const pointPattern = /^.*: (.*), .*: (.*)$/;
 
-const html = fs.readFileSync(`${filename}.html`);
-const { window } = new JSDOM(html);
+function printError(message) {
+  console.log(`error: ${message}`);
+  process.exit(1);
+}
 
+if (!process.argv[2]) printError("");
+if (!fs.existsSync(process.argv[2])) printError("");
+const html = fs.readFileSync(process.argv[2]);
+const { name } = path.parse(process.argv[2]);
+
+const { window } = new JSDOM(html);
 const points = window.document
   .querySelector(".graph-info")
   .innerHTML.split("<br>");
 const info = points.map((point) => point.match(pointPattern).slice(1, 3));
-
-// see also: https://stackoverflow.com/questions/3772290/css-selector-that-applies-to-elements-with-two-classes
 const notes = [...window.document.querySelectorAll(".note:not(.new)")];
 const contents = notes.map((note) => {
   const memo = note.childNodes[2].value;
@@ -23,5 +29,10 @@ const contents = notes.map((note) => {
 
 const header = ["memo", "x", "y"].join(separator);
 const tsv = [header, ...contents].join("\n");
-fs.writeFileSync(`${filename}.tsv`, tsv);
-console.log(info.flat().join(" "));
+
+try {
+  fs.writeFileSync(`${name}.tsv`, tsv);
+  console.log(info.flat().join(" "));
+} catch {
+  printError("");
+}
