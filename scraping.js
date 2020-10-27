@@ -11,7 +11,7 @@ function printError(message) {
 }
 
 if (!process.argv[2]) printError("入力ファイルを指定してください");
-if (!fs.existsSync(process.argv[2])) printError("入力ファイルの指定が不正です");
+if (!fs.existsSync(process.argv[2])) printError("入力ファイルが存在しません");
 const { name } = path.parse(process.argv[2]);
 const html = fs.readFileSync(process.argv[2]);
 const { document } = new JSDOM(html).window;
