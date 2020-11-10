@@ -10,6 +10,22 @@ function printError(message) {
   process.exit(1);
 }
 
+function editMemo(note) {
+  //改行文字を消す
+  if (note.indexOf("\n")!==-1) {
+    note=note.replace("\n", "");
+    editMemo(note);
+  }
+  //タブ文字を消す
+  if (note.indexOf("\t")!==-1) {
+    note=note.replace("\t", "");
+    editMemo(note);
+  }
+  else{
+    return note;
+  }
+}
+
 if (!process.argv[2]) printError("入力ファイルを指定してください");
 if (!fs.existsSync(process.argv[2])) printError("入力ファイルが存在しません");
 const { name } = path.parse(process.argv[2]);
@@ -21,10 +37,13 @@ try {
   const points = document.querySelector(".graph-info").innerHTML.split("<br>");
   info = points.map((point) => point.match(pointPattern).slice(1, 3));
   const notes = [...document.querySelectorAll(".note:not(.new)")];
+
   contents = notes.map((note) => {
     const memo = note.childNodes[2].value;
+    let editedMemo;
+    editedMemo=editMemo(memo);
     const [, x, y] = note.childNodes[3].textContent.match(pointPattern) || [];
-    return [memo, x, y].join(separator);
+    return [editedMemo, x, y].join(separator);
   });
 } catch {
   printError("入力ファイルの解析に失敗しました");
