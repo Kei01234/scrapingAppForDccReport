@@ -21,10 +21,11 @@ try {
   const points = document.querySelector(".graph-info").innerHTML.split("<br>");
   info = points.map((point) => point.match(pointPattern).slice(1, 3));
   const notes = [...document.querySelectorAll(".note:not(.new)")];
+
   contents = notes.map((note) => {
     const memo = note.childNodes[2].value;
     const [, x, y] = note.childNodes[3].textContent.match(pointPattern) || [];
-    return [memo, x, y].join(separator);
+    return [memo.replace(/[\n\t]/g, " "), x, y].join(separator);
   });
 } catch {
   printError("入力ファイルの解析に失敗しました");
